@@ -1,0 +1,97 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Transcription Factor Database - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Transcription Factors <small>TF Expression</small></h2>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class='container'>
+        <div class='row'>
+            <div class="col-md-1">
+
+            </div>
+            <h1 style="color: darkred">This page is currently under maintenance, please come again later.</h1><br>
+            <div class="col-md-10">
+                <div class="panel panel-info">
+                  <div class="panel-heading" style="text-align: center">TF Expression Heatmap Generation</div>
+                  <div class="panel-body">
+                      <form method="post" class="form">
+                          {% csrf_token %}
+                          <label>TF family name / TF gene id</label>
+                          <div class="input-group">
+                            <span class="input-group-addon"><b>fam:/id:</b></span>
+                            <input type="text" name="tf_query" class="form-control" placeholder="separate multiple queries with ;">
+                          </div>
+                          <span class="label label-info">Example: by family</span><label style="color: grey"><small>  fam:YABBY;fam:TCP</small></label>
+                          <span class="label label-info">Example: by ID</span><label style="color: grey"><small>  id:Zm00001d054112;id:Zm00001d054110</small></label>
+                          <br><br>
+                          <label>Tissue type name / Sample accession id</label>
+                          <div class="input-group">
+                            <span class="input-group-addon"><b>tis:/sp:</b></span>
+                            <input type="text" name="sample_query" class="form-control" placeholder="separate multiple queries with ;">
+                          </div>
+                          <span class="label label-info">Example: by tissue</span><label style="color: grey"><small>  tis:root;tis:ear</small></label>
+                          <span class="label label-info">Example: by sample</span><label style="color: grey"><small>  sp:SRR13178453;sp:SRR13161349</small></label>
+                          <br><br>
+                          <label>Select species</label>
+                          <select class="form-control" name="species_query" style="height: 40px; width: 300px">
+                                <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                                <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                                <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                          </select>
+                          <br>
+                          <button type="submit" class="btn btn-primary" style="height: 40px; width: 300px">Generate Heatmap</button>
+                      </form>
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-1">
+
+            </div>
+        </div>
+    </div>
+    <div class='container'>
+        <div class='row'>
+            <div class="col-md-1">
+
+            </div>
+            <div class="col-md-7">
+                <div class="panel panel-default">
+                  <div class="panel-heading">Explore raw TF expression data: <i>Zea mays</i></div>
+                  <div class="panel-body">
+                    <div>Overview: TF <b>family distribution</b> for <i>Zea mays</i><br></div>
+                    <iframe src="{% static 'TF_homepage/Zea_mays_TF_overview.html' %}"
+                            width="500px" height="200px" name="topFrame" frameborder="0"></iframe>
+                    <div>Available tissue types: <b style="color: darkred">{{ zea_tissue_list }}</b></div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                    <div>Download raw data here<br></div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-1">
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

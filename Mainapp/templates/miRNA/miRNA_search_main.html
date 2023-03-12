@@ -1,0 +1,234 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene Expression - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">miRNA Expression Profiles</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search miRNA expression data regarding <br>representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align: center">miRNA Expression Database: Main Search</div>
+                    <div class="panel-body">
+                        <br>
+                        <form method="post" id="miRNA_expression_query_mainform" style="text-align: center">
+                            {% csrf_token %}
+                            <label>
+                                <input type="text" name="main_query" placeholder="separate multiple queries with ;" class="form-control" id="main_query_id" style="width: 550px; height: 45px" required>
+                            </label>
+                            <label>
+                                <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                                    <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                    <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                </select>
+                            </label>
+                            <br>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="Counts_chosen" value="Counts"> in Counts
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="Normalized_chosen" value="Nomalized"> in Nomalized
+                            </label>
+                            <br><br>
+                            <p class="bg-danger"><b style="color: white">{{ error_message }}</b></p>
+                            <a href="javascript:exampleList()" class="btn btn-default" style="height: 45px">
+                                <span class="glyphicon glyphicon-bookmark"></span>
+                                Show Example
+                            </a>
+                            <button id="submit_form" class="btn btn-primary" style="height: 45px">
+                                <span class="glyphicon glyphicon-hourglass"></span>
+                                Search Expression Profile
+                            </button>
+                            <!--<input type="submit" value="Search" class="btn btn-primary" style="width: 200px; height: 45px">-->
+
+                            <br>
+                        </form>
+                    </div>
+                </div>
+                <!--Pre-hidden loading animation-->
+                <div id="div_main_loader" class="loader" style="display: none"></div>
+            </div>
+        </div>
+    </div>
+
+    <!--Content displayer-->
+    {% for indv_query in query_list_full %}
+        <div class='container'>
+            <div class='row'>
+                <div class="col-md-8">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ indv_query.0.0 }}: Expression Plots ({{ query_format }})</h3>
+                        </div>
+                        <div class="panel-body">
+                            <iframe src="{% static 'Temp_R_miRNA/' %}{{ indv_query.0.0 }}_plt1.html"
+                                width="700px" height= "300px" name="topFrame" frameborder="0"></iframe>
+
+                            <iframe src="{% static 'Temp_R_miRNA/' %}{{ indv_query.0.0 }}_plt2.html"
+                                width="700px" height= "310px" name="topFrame" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ indv_query.0.0 }}: Fundamental Info ({{ query_format }})</h3>
+                        </div>
+                        <div class="panel-body">
+                            <br>
+                            <ul class="list-group">
+                                <li class="list-group-item">miRNA ID: <b style="color: #ff1e3a">{{ indv_query.0.0 }}</b></li>
+                                <li class="list-group-item">Detected in <b style="color: #ff1e3a">{{ indv_query.0.1 }}/{{ indv_query.0.2 }}</b> samples <b style="color: #ff1e3a">({% widthratio indv_query.0.1 indv_query.0.2 100 %}%)</b></li>
+                                <li class="list-group-item">Max: <b>{{ indv_query.0.3 }}</b></li>
+                                <li class="list-group-item">Min: <b>{{ indv_query.0.4 }}</b></li>
+                                <li class="list-group-item">Median: <b>{{ indv_query.0.5 }}</b></li>
+                            </ul>
+                            <div class="text-center">
+                                <p><small>The standard of an expressed gene is set to be Counts/Normalized_seq>1</small></p>
+                            </div>
+                            <hr>
+                            <div class="text-center">
+                                <p>Obtain sequences of the target miRNA based on genome annotation profiles.</p>
+                                <a class="btn btn-default" href="{% url 'gene_sequence' %}?sp={{ query_species }}&gene={{ indv_query.0.0 }}&format=gene">
+                                    <span class="glyphicon glyphicon-eye-open"></span>
+                                    Search miRNA sequence
+                                </a>
+                                <br><br>
+                                <hr>
+                                <p>Preview or download raw miRNA expression data table used to generate the plots.</p>
+                                <a class="btn btn-info" href="javascript:previewCSV('{% static 'Temp_R_miRNA/' %}{{ indv_query.0.0 }}_values.csv')">
+                                    <span class="glyphicon glyphicon-file"></span>
+                                    Preview
+                                </a>
+                                <a class="btn btn-default" href="{% static 'Temp_R_miRNA/' %}{{ indv_query.0.0 }}_values.csv">
+                                    <span class="glyphicon glyphicon-download"></span>
+                                    Download table (.csv)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <!--Store pending task-ids awaiting AJAX validation-->
+    <div id="div_task_id" hidden>{{ task_id }}</div>
+
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+    // Set up django CSRF verification mechanism
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Set up django CSRF verification mechanism
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    // Set up AJAX
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            const csrftoken = getCookie('csrftoken');
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    })
+
+    // Evaluate if a pending task is to be submitted
+    var task_id_global = undefined
+
+    // Fill example data
+    function exampleList() {
+        const species = $("#query_species_id option:selected").val();
+        switch (species) {
+            {#case 'zea':#}
+            {#    document.getElementById("main_query_id").value="Zm00001d023520";#}
+            {#    break;#}
+            case 'sorghum':
+                document.getElementById("main_query_id").value="sbi-miR156a";
+                break;
+        }
+    }
+
+    // Preview CSV table
+    function previewCSV(path_to_CSV){
+        Papa.parse(path_to_CSV, {
+            download: true,
+            complete: function(results) {
+                Heiho(results.data);
+            }
+        });
+    }
+
+    $(window).on('load', function (){
+        var loader_div = document.getElementById('div_main_loader')
+        // loader_div.style.display = 'none'
+        var taskId = $("#div_task_id").html()
+        if(taskId == null || taskId.length === 0){
+            // no task pending
+        }else {
+            // task executing
+            // console.log("Task " + taskId)
+            task_id_global = taskId
+            loader_div.style.display = 'block'
+            loop_get_taskstatus()
+        }
+    })
+
+    function loop_get_taskstatus() {
+        var taskId = task_id_global
+        //Send GET AJAX request every 2 seconds, querying for task status
+        setTimeout(loop_get_taskstatus,2*1000)
+
+        $.ajax({
+            url: '{% url 'async_progress_query' %}?taskid=' + taskId,
+            type: 'get',
+            dataType: 'json',
+            success: function (json_data) {
+                var taskResult = eval(json_data)
+                var taskStatus = taskResult['state']
+                console.log(taskStatus)
+
+                if(taskStatus === 'SUCCESS') {
+                    location.href='{% url 'gene_expression' %}?success=1&taskid=' + taskId
+                }
+                if(taskStatus === 'FAILURE') {
+                    location.href='{% url 'gene_expression' %}?success=0&taskid=' + taskId
+                }
+            }
+        })
+    }
+    </script>
+{% endblock %}

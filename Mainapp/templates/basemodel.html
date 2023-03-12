@@ -1,0 +1,148 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="{% static "AllPageStatic/favicon.ico" %}" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Page Title-->
+    <title>{% block title_block %}{% endblock %}</title>
+
+    <!--External CSS styles-->
+    <link rel='stylesheet' href='{% static 'Bootstrap-3.4.1/css/bootstrap.min.css' %}'>
+    <link rel='stylesheet' href='{% static 'CSS/heiho-modified.css' %}' />
+    <link rel="stylesheet" href={% static 'CSS/loader-main.css' %}>
+</head>
+<body>
+    <!--Navigation Bar-->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="transform: scale(1.2)" href={% url 'home_page' %}>HEMU</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
+          <ul class="nav navbar-nav">
+            <li><a href={% url 'home_page' %}>Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Transcriptome<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'gene_expression' %}>Gene Expression Query</a></li>
+                <li><a href={% url 'gene_sequence' %}>Raw Sequence Acquisition <small>(Gene/Transcript/Protein)</small></a></li>
+                <li><a href={% url 'gene_DE' %}>Differential Gene Expression Analysis</a></li>
+                <li><a href={% url 'gene_gokegg' %}>GO/KEGG Functional Enrichment</a></li>
+                <li><a href="{% url 'gene_wgcna' %}">Weighted Gene Co-Expression Network Analysis</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">TE<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'te_expression' %}>TE Expression Query <small>(Family-level/Sample-level)</small></a></li>
+                <li><a href={% url 'te_insertion' %}>Insertion Density</a></li>
+                <li><a href={% url 'home_page' %}>TE-Gene Interaction</a></li>
+                <li><a href={% url 'home_page' %}>Differential TE Expression Analysis</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Gene Family<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'genefam_hmm' %}>Family Identification (HMM)</a></li>
+                <li><a href={% url 'home_page' %}>Family Identification (BLASTP)</a></li>
+                <li><a href={% url 'genefam_phylo' %}>Phylogenetic Analysis</a></li>
+                <li><a href={% url 'genefam_expheatmap' %}>Family Expression</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Population<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'home_page' %}>SNP & Indel Identification</a></li>
+                <li><a href={% url 'home_page' %}>GWAS Module</a></li>
+                <li><a href={% url 'home_page' %}>Trait Loci Analysis</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Miscellaneous<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url "jbrowse" %}>Global Genome Viewer (JBrowse2)</a></li>
+                <li><a href={% url "sequenceserver" %}>Global BLAST Server</a></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'user_guide' %}>User guide</a></li>
+                <li><a href="#">Cite HEMU database</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Downloads</li>
+                <li><a href="#">Gene expression matrix</a></li>
+                <li><a href="#">Plotting scripts</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <!--Page Header Row-->
+    {% block pre_header_block %}{% endblock %}
+    <div class="container" style="margin: 25px 110px;">
+        <div class="page-header">
+            <div class='row'>
+                {% block header_block %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!--Main Page Content-->
+    {% block content_block %}{% endblock %}
+
+    <!--Subsidiary Page Content-->
+    {% block aux_block1 %}{% endblock %}
+    {% block aux_block2 %}{% endblock %}
+
+    <!--External Javascript-->
+    {% block javascript_block %}{% endblock %}
+    <script type='text/javascript' src='{% static 'JS/jquery-1.12.4.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'Bootstrap-3.4.1/js/bootstrap.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/papaparse.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/heiho.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/echarts.min.js' %}'></script>
+
+    <!--Subsidiary Page Content-->
+    {% block footer_script_block %}{% endblock %}
+
+    <!--Global Footer-->
+    <footer class="container-fluid">
+        <footer class="footer">
+            <div class="container">
+                <br><br>
+                <HR style= "width: 100%" SIZE = 3>
+                <address>
+                    <span class="glyphicon glyphicon-wrench"></span>
+                    <strong>Edward Zhu</strong> <small>(Chief developer)</small><br>
+                    <a href="mailto:edwardmashed@gmail.com">edwardmashed@gmail.com</a>
+                </address>
+                <address>
+                    <strong>School of Agriculture, Sun Yat-Sen University</strong><br>
+                    No.66, Gongchang Road, Guangming District, Shenzhen,Guangdong<br>
+                    518107, P.R.China<br>
+                </address>
+                <a href="{% url 'site_manage' %}">Manage site</a><br>
+                <a href="{% url 'async_test' %}">    Celery testing page</a>
+                <br><br><br>
+            </div>
+        </footer>
+    </footer>
+
+</body>
+</html>

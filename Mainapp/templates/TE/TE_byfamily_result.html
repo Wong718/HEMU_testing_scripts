@@ -1,0 +1,124 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    TE Expression - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Transposable Elements <small>TE Expression</small></h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search here for TE expression data regarding <br>representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'>
+            <!--Query by Accession Number-->
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align: center">Query by <strong>SAMPLE ID</strong></div>
+                    <div class="panel-body">
+                        <br>
+                        <form method="post" style="text-align: center">
+                            <br><br>
+                            <div class="input-group">
+                                {% csrf_token %}
+                                <span class="input-group-addon"><b>Accession</b></span>
+                                <input type="text" name="te_query_accession" class="form-control" placeholder="separate multiple queries with ;" value="SRR1030975" style="height: 45px">
+                            </div>
+                            <br>
+                            <label>
+                                <select class="form-control" name="species_query_accession" style="height: 45px">
+                                    <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                                    <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                    <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                    <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                                    <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                                </select>
+                            </label>
+                            <br>
+                            <br>
+                            <input type="submit" value="Search" class="btn btn-primary" style="width: 200px; height: 35px">
+
+                        </form>
+                        <HR style= "width: 80%" SIZE = 3>
+                    </div>
+                </div>
+            </div>
+
+            <!--Query by TE ID-->
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align: center">Query by <strong>TE FAMILY ID</strong></div>
+                    <div class="panel-body">
+                        <br>
+                        <form method="post" style="text-align: center">
+                            <span id="helpBlock" class="help-block"><strong>Don't know which family your TE of interest belongs to? <a
+                                    href="{% url 'sequenceserver' %}">Take a BLAST</a></strong></span>
+                            <div class="input-group">
+                                {% csrf_token %}
+                                <span class="input-group-addon"><b>fam:/id:</b></span>
+                                <input type="text" name="te_query_teid" class="form-control" placeholder="separate multiple queries with ;" value="TE_00015391" style="height: 45px">
+                            </div>
+                            <br>
+                            <label>
+                                <select class="form-control" name="species_query_teid" style="height: 45px">
+                                    <option value="coix">Coix lacryma</option>
+                                    <option value="zea" selected>Zea mays</option>
+                                    <option value="saccharum">Saccharum</option>
+                                    <option value="sorghum">Sorghum bicolor</option>
+                                    <option value="miscanthus">Miscanthus floridulus</option>
+                                </select>
+                            </label>
+                            <br>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="FPKM_chosen" value="FPKM"> in FPKM
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="TPM_chosen" value="TPM" checked> in TPM
+                            </label>
+                            <br>
+                            <br>
+                            <input type="submit" value="Search" class="btn btn-primary" style="width: 200px; height: 35px">
+
+                        </form>
+                        <HR style= "width: 80%" SIZE = 3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for indv_query in query_list %}
+
+        <div class='container'>
+            <div class='row'>
+                <div class="col-md-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ indv_query }}: TE Expression Plots (TPM)</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="text-center">
+                                <iframe src="{% static 'Temp_R_TE/' %}{{ indv_query }}_plt_TE_famsample.html"
+                                    width="500px" height= "350px" name="topFrame" frameborder="0"></iframe>
+
+                                <iframe src="{% static 'Temp_R_TE/' %}{{ indv_query }}_plt_TE_famtissue.html"
+                                    width="500px" height= "350px" name="topFrame" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+{% endblock %}
